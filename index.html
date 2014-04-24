@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cube</title>
+    <!-- Bootstrap -->
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/cube.css" rel="stylesheet">
+    
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h3 class="text-muted">TiSensorTag/accelerometer/+</h3>
+      </div>
+      <div class="jumbotron" id="jumbotron"></div>
+      
+      <div class="row">
+       <div class="col-sm-5">
+          <div class="input-group">
+            <span class="input-group-addon">broker</span>
+            <input type="text" class="form-control requiresDisconnect" id="connectBroker" placeholder="broker" value="messagesight.demos.ibm.com">
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="input-group">
+            <span class="input-group-addon">port</span>
+            <input type="text" class="form-control requiresDisconnect" id="connectPort" placeholder="port" value="1883">
+          </div>
+        </div> 
+        <div class="col-sm-4">
+          <div class="btn-group btn-group-justified">
+            <div class="btn-group">
+              <button type="button" class="btn btn-success requiresDisconnect" id="connectButton">connect</button>
+            </div>
+            <div class="btn-group">
+              <button type="button" class="btn btn-danger requiresConnect" id="disconnectButton">disconnect</button>
+            </div>
+          </div>
+        </div>    
+      </div><!-- /.row -->
+      
+      <div id="connectedAlert" class="alert alert-success" style="display:none; margin-top: 15px;">
+        Connected to <span id="connectedAlertBroker"></span><span id="connectedAlertPort"></span>
+      </div>
+
+      <div id="errorAlert" class="alert alert-danger" style="display:none; margin-top: 15px;">
+        Error: <span id="errorAlertText"></span>
+      </div>
+      
+      <div id="log">
+				<div>
+					<pre style="line-height: 14px; font-size: 11px; margin-top: 15px;" class="pre-scrollable" id="logContents"></pre>
+				</div>
+			</div>
+      
+    </div><!-- /container -->
+	
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="http://threejs.org/build/three.min.js"></script>
+    <script src="js/utils/mqttws31.js"></script>
+    <script src="js/cube.js"></script>
+    <script src="js/MQTTClient.js"></script>
+	</body>
+</html>
