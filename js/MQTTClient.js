@@ -2,12 +2,16 @@
 // requires mqttws31.js
 //
 
+var debug = false;
 var defaultBroker = "messagesight.demos.ibm.com";
 var defaultPort = 1883;
 var baseTopic = "TiSensorTag";
 var topics = [baseTopic + "/accelerometer/x", 
               baseTopic + "/accelerometer/y", 
-              baseTopic + "/accelerometer/z"];
+              baseTopic + "/accelerometer/z",
+              baseTopic + "/key/left", 
+              baseTopic + "/key/right",
+              /*baseTopic + "/temperature/ambient"*/];
 var clientId = "Client" + Math.floor(10000 + Math.random() * 90000);
 var client = null;
 
@@ -18,10 +22,9 @@ $(".requiresConnect").attr("disabled", true);
 
 // set button callbacks
 $("#connectButton").click(function(event) {
-	var broker = $("#connectBroker").val();
+  var broker = $("#connectBroker").val();
 	var port = $("#connectPort").val();
 	connect(broker, port);
-  //appendLog("yo dawg!");
 });
 
 $("#disconnectButton").click(function(event) {
@@ -59,8 +62,10 @@ function connect(broker, port) {
 		$("#subscribeToggle").click();
 		$(".requiresConnect").attr("disabled",false);
 		$(".requiresDisconnect").attr("disabled",true);
+		clearLog();
 		appendLog("Connected to " + broker + ":" + port);
     topics.forEach(subscribe);
+    appendLog("Tilt sensor tag and press buttons to manipulate the box.");
 	}
   
 	connectOptions.onFailure = function() { 
@@ -98,7 +103,9 @@ function onMessage(msg) {
 	var retained = msg._getRetained();
 	var qosStr = ((qos > 0) ? "[qos " + qos + "]" : "");
 	var retainedStr = ((retained) ? "[retained]" : "");
-	appendLog(">> [" + topic + "]" + qosStr + retainedStr + " " + payload);
+	if( debug ) {
+	  appendLog(">> [" + topic + "]" + qosStr + retainedStr + " " + payload);
+	}
   updateCube(topic, payload);
 }
 

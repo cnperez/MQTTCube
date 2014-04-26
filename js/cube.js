@@ -1,5 +1,6 @@
 var container;
 var width, height;
+var geometry;
 var cube, axisHelper;
 var camera, scene, renderer;
 var ratio = 0.618;
@@ -23,15 +24,8 @@ function init() {
 
   // Cube
   
-  var geometry = new THREE.BoxGeometry( 200, 300, 100 );
-
-  for ( var i = 0; i < geometry.faces.length; i += 2 ) {
-
-    var hex = Math.random() * 0xffffff;
-    geometry.faces[ i ].color.setHex( hex );
-    geometry.faces[ i + 1 ].color.setHex( hex );
-
-  }
+  geometry = new THREE.BoxGeometry( 200, 300, 100 );
+  setFaceColors();
   
   var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.FaceColors, overdraw: 0.5 } );
 
@@ -53,6 +47,7 @@ function init() {
   tiltCube(orientVector);
 }
 
+
 function onWindowResize() {
   width = container.width();
   height = ratio * width;
@@ -71,6 +66,15 @@ function render() {
   renderer.render( scene, camera );
 }
 
+function setFaceColors() {
+  for ( var i = 0; i < geometry.faces.length; i += 2 ) {
+    var hex = Math.random() * 0xffffff;
+    geometry.faces[ i ].color.setHex( hex );
+    geometry.faces[ i + 1 ].color.setHex( hex );
+  }
+  geometry.colorsNeedUpdate = true;
+}
+
 function tiltCube(orient) {
     //assuming (0,1,0) when tag is upright
     var x, y, z;
@@ -86,16 +90,38 @@ function tiltCube(orient) {
     //axisHelper.rotation.z = roll;  
 } 
 
+function embiggenCube() {
+  var scale = 1.5;
+  cube.scale.x = scale;
+  cube.scale.y = scale;
+  cube.scale.z = scale;
+}
+
+function smallifyCube() {
+  var scale = 1;
+  cube.scale.x = scale;
+  cube.scale.y = scale;
+  cube.scale.z = scale;
+}
+
 function lowpassFilter(currentVal, newVal) {
   var k = 0.75;
   return k * currentVal + (1.0 - k) * newVal;
 }
 
-function updateCube(message, payload) {
-  if( message.indexOf("accelerometer") ) {
-    axis = message.split("/").pop();
+function updateCube(topic, payload) {
+  //console.log("topic: " + topic + " payload: " + payload);
+  if( topic.indexOf("accelerometer") > -1) {
+    axis = topic.split("/").pop();
     accelVal = parseFloat(payload);
     orientVector[axis] = lowpassFilter(orientVector[axis], accelVal);
     tiltCube(orientVector);
+  }  else if( topic.indexOf("key/left") > -1 && payload === "1" ) {
+    //console.log("keypressed");
+    setFaceColors();
+  } else if( topic.indexOf("key/right") > -1 && payload === "1" ) {
+    embiggenCube();
+  } else if( topic.indexOf("key/right") > -1 && payload === "0" ) {
+    smallifyCube();
   }
 }
